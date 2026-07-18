@@ -3,7 +3,7 @@ import { el } from '../components/dom.js';
 import { showToast } from '../components/toast.js';
 import * as store from '../../store.js';
 import { ACHIEVEMENTS, ACHIEVEMENT_CATEGORIES } from '../../config/achievements.js';
-import { AVATARS, ACCENTS, COSMETIC_TITLES } from '../../config/rewards.js';
+import { AVATARS, ACCENTS, COSMETIC_TITLES, FRAMES } from '../../config/rewards.js';
 import { characterInfo } from '../../domain/character.js';
 
 const ui = { tab: 'rozet' };
@@ -59,6 +59,9 @@ function renderInventory() {
   frag.appendChild(rewardSection('🎨 Tema Renkleri', ACCENTS, 'accent',
     (r) => el('span', { class: 'accent-dot', style: { background: `linear-gradient(135deg, ${r.color}, ${r.color2})` } }),
     () => store.settings().accent, charLevel));
+  frag.appendChild(rewardSection('🖼️ Kart Çerçeveleri', FRAMES, 'frame',
+    (r) => el('span', { class: 'frame-preview frame-' + r.id }, '🖼️'),
+    () => store.state.character.frameId || 'none', charLevel));
   frag.appendChild(rewardSection('🏷️ Unvanlar', COSMETIC_TITLES, 'title',
     (r) => '🏷️', () => store.state.character.cosmeticTitleId, charLevel));
 

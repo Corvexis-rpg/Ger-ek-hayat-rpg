@@ -81,6 +81,18 @@ export async function load() {
       ...t, uses: 0, sortOrder: i, isCustom: false, isFavorite: !!t.isFavorite,
     }));
     await db.putMany(STORES.actionTypes, state.actionTypes);
+  } else {
+    // Yeni sürümlerde eklenen hazır eylemleri mevcut kullanıcılara da ekle
+    const have = new Set(state.actionTypes.map((t) => t.id));
+    const missing = DEFAULT_ACTION_TYPES.filter((t) => !have.has(t.id));
+    if (missing.length) {
+      const base = state.actionTypes.length;
+      const added = missing.map((t, i) => ({
+        ...t, uses: 0, sortOrder: base + i, isCustom: false, isFavorite: !!t.isFavorite,
+      }));
+      state.actionTypes.push(...added);
+      await db.putMany(STORES.actionTypes, added);
+    }
   }
 
   state.actions = (await db.getAll(STORES.actions)).sort((a, b) => b.timestamp - a.timestamp);
@@ -184,6 +196,7 @@ export async function logAction(actionTypeId, opts = {}) {
   const action = {
     id: uid(), actionTypeId, timestamp: now, day,
     note: (opts.note || '').trim() || null,
+    detail: opts.detail || null, // { duration?, quantity? }
     statAwards: awards, multiplierApplied: mult,
   };
   state.actions.unshift(action);
@@ -473,11 +486,28 @@ export async function setSetting(key, value) {
   change();
 }
 
+// ---- rutin / günlük plan ----
+export function getRoutine() { return state.meta.settings.routine || []; }
+
+export async function addRoutineItem(actionTypeId, part = 'genel') {
+  if (!state.meta.settings.routine) state.meta.settings.routine = [];
+  state.meta.settings.routine.push({ id: uid(), actionTypeId, part });
+  await persistMeta();
+  change();
+}
+
+export async function removeRoutineItem(id) {
+  state.meta.settings.routine = (state.meta.settings.routine || []).filter((r) => r.id !== id);
+  await persistMeta();
+  change();
+}
+
 export async function equipReward(kind, id) {
   if (!state.rewards[id]) return;
   if (kind === 'avatar') await updateCharacter({ avatarId: id });
   else if (kind === 'accent') await setSetting('accent', id);
   else if (kind === 'title') await updateCharacter({ cosmeticTitleId: id });
+  else if (kind === 'frame') await updateCharacter({ frameId: id });
 }
 
 export function rewardUnlocked(id) { return !!state.rewards[id]; }
@@ -486,6 +516,27 @@ export function rewardUnlocked(id) { return !!state.rewards[id]; }
 export async function importData(data) {
   await db.importAll(data);
   await load();
+  await runMaintenance();
+  change();
+}
+
+// Sadece ilerlemeyi sıfırla: karakter, eylem türleri ve plan korunur.
+export async function resetProgress() {
+  await db.clearStore(STORES.actions);
+  state.actions = [];
+  for (const s of STATS) state.statProgress[s.id] = { xp: 0, level: 1, lastActivityDay: null, lastRustDay: null };
+  state.streaks = {};
+  state.achievements = {};
+  state.rewards = {};
+  const insts = state.quests.filter((q) => q.kind === 'instance');
+  for (const q of insts) await db.del(STORES.quests, q.id);
+  state.quests = state.quests.filter((q) => q.kind !== 'instance');
+  for (const q of state.quests) {
+    if (q.kind === 'goal') { q.status = 'active'; q.completedAt = null; q.manualDone = false; await persistQuest(q); }
+  }
+  await Promise.all([persistStatProgress(), persistStreaks(), persistAchievements()]);
+  syncRewards(true);
+  await persistRewards();
   await runMaintenance();
   change();
 }

@@ -12,6 +12,7 @@ import { actionXp } from '../../domain/stats.js';
 import { todayKey } from '../../services/time.js';
 import { getReminders } from '../../services/reminders.js';
 import { openQuickAdd } from '../actionForms.js';
+import { planCard } from '../routine.js';
 import { questRow } from './quests.js';
 
 export function renderHome() {
@@ -26,7 +27,7 @@ export function renderHome() {
   const todayXp = todaysActions.reduce((s, a) => s + actionXp(a), 0);
 
   // --- karakter kartı ---
-  wrap.appendChild(el('div', { class: 'card hero-card' },
+  wrap.appendChild(el('div', { class: 'card hero-card frame-' + (ch.frameId || 'none') },
     el('div', { class: 'hero-top' },
       el('div', { class: 'avatar-badge' }, avatar.emoji),
       el('div', { class: 'hero-id' },
@@ -77,6 +78,9 @@ export function renderHome() {
     el('span', { class: 'big-add-plus' }, '+'),
     el('span', {}, 'Eylem Ekle'),
   ));
+
+  // --- bugünün planı (rutin) ---
+  wrap.appendChild(planCard());
 
   // --- ana statlar ---
   const statsCard = el('div', { class: 'card' },

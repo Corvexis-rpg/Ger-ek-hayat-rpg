@@ -26,7 +26,7 @@ export function renderCharacter() {
     el('h1', {}, 'Karakter')));
 
   // karakter kartı
-  wrap.appendChild(el('div', { class: 'card char-card' },
+  wrap.appendChild(el('div', { class: 'card char-card frame-' + (ch.frameId || 'none') },
     el('div', { class: 'char-avatar-big', onclick: openAvatarPicker }, avatar.emoji),
     el('div', { class: 'char-name-row' },
       el('h2', {}, ch.name),
@@ -102,12 +102,19 @@ export function renderCharacter() {
   // --- Tehlikeli bölge ---
   wrap.appendChild(el('div', { class: 'card danger-zone' },
     el('div', { class: 'card-head' }, el('h3', {}, '⚠️ Sıfırlama')),
-    el('p', { class: 'muted small' }, 'Karakterini ve tüm ilerlemeni siler. Bu işlem geri alınamaz.'),
+    el('p', { class: 'muted small' }, 'İlerlemeyi sıfırla: tüm XP, seri, eylem geçmişi, başarım ve ödüller silinir; karakterin, özel eylemlerin ve planın korunur.'),
+    el('button', { class: 'btn full', style: { marginBottom: '10px' }, onclick: async () => {
+      if (await confirmDialog({ title: 'İlerlemeyi sıfırla', message: 'Tüm XP, seri, eylem geçmişi, başarım ve ödüller sıfırlanacak. Karakterin ve özel eylemlerin kalır. Devam edilsin mi?', confirmText: 'İlerlemeyi sıfırla', danger: true })) {
+        await store.resetProgress(); showToast('İlerleme sıfırlandı', 'info'); location.hash = '#/home';
+      }
+    } }, '♻️ Sadece ilerlemeyi sıfırla'),
+    el('div', { class: 'divider' }),
+    el('p', { class: 'muted small' }, 'Hesabı sil: karakter dahil HER ŞEY silinir ve uygulama sıfırdan başlar. Geri alınamaz.'),
     el('button', { class: 'btn danger full', onclick: async () => {
-      if (await confirmDialog({ title: 'Her şeyi sıfırla', message: 'Tüm karakter, eylem ve ilerleme verisi silinecek. Emin misin?', confirmText: 'Sıfırla', danger: true })) {
+      if (await confirmDialog({ title: 'Hesabı ve her şeyi sil', message: 'Karakter, eylemler, özel eylemler, plan — tüm veri kalıcı olarak silinecek ve uygulama en baştan başlayacak. Emin misin?', confirmText: 'Her şeyi sil', danger: true })) {
         await store.resetAll(); location.hash = '#/home'; location.reload();
       }
-    } }, 'Tüm verileri sıfırla'),
+    } }, '🗑️ Hesabı sil (her şeyi sıfırla)'),
   ));
 
   wrap.appendChild(el('div', { class: 'app-foot muted small' }, 'Gerçek Hayat RPG · Çevrimdışı · v1'));

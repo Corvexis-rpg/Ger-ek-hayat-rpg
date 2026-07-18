@@ -21,8 +21,19 @@ export const ACHIEVEMENTS = [
   { id: 'hepsi_5',    name: 'Uyanış',         icon: '🌅', category: 'stat',      desc: 'Tüm ana statları 5. seviyeye getir.',         check: (s) => s.minMainLevel >= 5 },
   { id: 'hepsi_10',   name: 'Denge',          icon: '☯️', category: 'stat',      desc: 'Tüm ana statları 10. seviyeye getir.',        check: (s) => s.minMainLevel >= 10 },
 
+  { id: 'hepsi_20',   name: 'Efsanevi Denge', icon: '🌟', category: 'stat',      desc: 'Tüm ana statları 20. seviyeye getir.',        check: (s) => s.minMainLevel >= 20 },
+  { id: 'yaratici_usta', name: 'Sanatçı Ruh', icon: '🎨', category: 'stat',      desc: 'Yaratıcılık statını 20. seviyeye getir.',     check: (s) => (s.statLevels.yaraticilik || 0) >= 20 },
+  { id: 'disiplin_usta', name: 'Demir Disiplin', icon: '🛡️', category: 'stat',  desc: 'Disiplin statını 15. seviyeye getir.',        check: (s) => (s.statLevels.disiplin || 0) >= 15 },
+
+  { id: 'kod_50',     name: 'Kodlayıcı',      icon: '💻', category: 'ozel',      desc: '50 yazılım eylemi kaydet.',                   check: (s) => (s.categoryCounts.kod || 0) >= 50 },
+  { id: 'dil_50',     name: 'Poliglot',       icon: '🗣️', category: 'ozel',      desc: '50 dil eylemi kaydet.',                       check: (s) => (s.categoryCounts.dil || 0) >= 50 },
+  { id: 'hareket_50', name: 'Yorulmaz',       icon: '🏃', category: 'ozel',      desc: '50 hareket eylemi kaydet.',                   check: (s) => (s.categoryCounts.hareket || 0) >= 50 },
+  { id: 'erken_kus',  name: 'Erken Kuş',      icon: '🌅', category: 'ozel',      desc: '10 kez erken kalktığını kaydet.',             check: (s) => (s.actionTypeCounts.erken_kalk || 0) >= 10 },
+  { id: 'plan_kurucu',name: 'Planlı',         icon: '🗓️', category: 'ozel',      desc: 'Kendi günlük planını oluştur.',               check: (s) => s.routineCount >= 1 },
+
   { id: 'seviye_10',  name: 'Kahraman Yolu',  icon: '⭐', category: 'ilerleme',  desc: 'Karakter seviyeni 10 yap.',                   check: (s) => s.characterLevel >= 10 },
   { id: 'seviye_25',  name: 'Yükseliş',       icon: '🌟', category: 'ilerleme',  desc: 'Karakter seviyeni 25 yap.',                   check: (s) => s.characterLevel >= 25 },
+  { id: 'seviye_50',  name: 'Zirve',          icon: '👑', category: 'ilerleme',  desc: 'Karakter seviyeni 50 yap.',                   check: (s) => s.characterLevel >= 50 },
   { id: 'gece_kusu',  name: 'Gece Nöbeti',    icon: '🌌', category: 'ozel',      desc: 'Gece yarısı ile sabah 4 arasında bir eylem kaydet.', check: (s) => s.nightAction },
 ];
 

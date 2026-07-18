@@ -30,6 +30,17 @@ export function buildSummary(state) {
     return h >= 0 && h < 4;
   });
 
+  // kategori ve eylem türü sayımları
+  const typeById = Object.fromEntries((actionTypes || []).map((t) => [t.id, t]));
+  const categoryCounts = {};
+  const actionTypeCounts = {};
+  for (const a of actions || []) {
+    actionTypeCounts[a.actionTypeId] = (actionTypeCounts[a.actionTypeId] || 0) + 1;
+    const t = typeById[a.actionTypeId];
+    if (t) categoryCounts[t.category] = (categoryCounts[t.category] || 0) + 1;
+  }
+  const routineCount = ((state.meta && state.meta.settings && state.meta.settings.routine) || []).length;
+
   return {
     totalActions: (actions || []).length,
     statLevels,
@@ -40,6 +51,9 @@ export function buildSummary(state) {
     hasCustomType,
     leveledUpOnce,
     nightAction,
+    categoryCounts,
+    actionTypeCounts,
+    routineCount,
   };
 }
 

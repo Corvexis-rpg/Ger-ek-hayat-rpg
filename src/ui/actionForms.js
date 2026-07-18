@@ -14,30 +14,21 @@ export async function logNow(typeId, note) {
   return res;
 }
 
-// Hızlı ekleme sayfası: favoriler + not alanı + özel oluştur
+// Hızlı ekleme sayfası: favoriler → dokununca detay penceresi açılır
 export function openQuickAdd() {
   openSheet({
     title: 'Eylem Ekle',
     body: (content) => {
-      let note = '';
-      const noteInput = el('input', {
-        class: 'input', type: 'text', maxlength: 120,
-        placeholder: 'İsteğe bağlı kısa not…',
-        oninput: (e) => { note = e.target.value; },
-      });
-
       const grid = el('div', { class: 'qa-grid' });
       const favs = store.favoriteActionTypes();
-      const list = favs.length ? favs : store.state.actionTypes.slice(0, 8);
-      for (const t of list) grid.appendChild(quickChip(t, () => note, noteInput));
+      const list = favs.length ? favs : store.state.actionTypes.slice(0, 10);
+      for (const t of list) grid.appendChild(quickChip(t));
 
       content.append(
-        el('label', { class: 'field-label' }, 'Not (opsiyonel)'),
-        noteInput,
         el('div', { class: 'section-label' }, 'Favori eylemler'),
         grid,
         el('button', { class: 'btn ghost full', style: { marginTop: '14px' },
-          onclick: () => { close(); openCustomActionForm(); } }, '✨ Özel eylem oluştur'),
+          onclick: () => openCustomActionForm() }, '✨ Özel eylem oluştur'),
         el('button', { class: 'btn ghost full', style: { marginTop: '8px' },
           onclick: () => { close(); location.hash = '#/actions'; } }, 'Tüm eylemleri gör →'),
       );
@@ -45,17 +36,10 @@ export function openQuickAdd() {
   });
 }
 
-function quickChip(t, getNote, noteInput) {
+function quickChip(t) {
   const streak = effectiveStreak(store.state.streaks[t.id], todayKey());
   return el('button', {
-    class: 'qa-chip', onclick: async (ev) => {
-      const btn = ev.currentTarget;
-      const res = await logNow(t.id, getNote());
-      if (res.ok) {
-        if (noteInput) noteInput.value = '';
-        btn.classList.add('pulse'); setTimeout(() => btn.classList.remove('pulse'), 400);
-      }
-    },
+    class: 'qa-chip', onclick: () => openActionDetail(t.id),
   },
     el('span', { class: 'qa-icon' }, t.icon),
     el('span', { class: 'qa-name' }, t.name),
@@ -63,26 +47,58 @@ function quickChip(t, getNote, noteInput) {
   );
 }
 
-// Notla ekleme (tek eylem)
-export function openLogWithNote(typeId) {
+// datetime-local için yerel biçim
+function localDateTimeValue(d = new Date()) {
+  const p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+// Eyleme dokununca açılan DETAY penceresi: not + süre + zaman
+export function openActionDetail(typeId) {
   const t = store.state.actionTypes.find((x) => x.id === typeId);
   if (!t) return;
+  const streak = effectiveStreak(store.state.streaks[typeId], todayKey());
   openSheet({
     title: t.icon + ' ' + t.name,
     body: (content) => {
-      let note = '';
+      const model = { note: '', duration: '', at: localDateTimeValue() };
+      const noteInput = el('textarea', { class: 'input', rows: 2, maxlength: 240,
+        placeholder: 'Ne yaptın? Kısa bir detay… (opsiyonel)', oninput: (e) => model.note = e.target.value });
+      const durInput = el('input', { class: 'input', type: 'number', min: 1, max: 1440,
+        placeholder: 'dk', oninput: (e) => model.duration = e.target.value });
+      const timeInput = el('input', { class: 'input', type: 'datetime-local', value: model.at,
+        max: localDateTimeValue(), oninput: (e) => model.at = e.target.value });
+
       content.append(
-        el('label', { class: 'field-label' }, 'Not (opsiyonel)'),
-        el('textarea', { class: 'input', rows: 3, maxlength: 200, placeholder: 'Bu eylem hakkında bir not…',
-          oninput: (e) => { note = e.target.value; } }),
         el('div', { class: 'award-preview' },
           ...t.awards.map((a) => {
             const s = statById(a.statId);
             return el('span', { class: 'chip mini', style: { color: s.color } }, `${s.icon} +${a.xp}`);
-          })),
-        el('div', { class: 'row-actions', style: { marginTop: '16px' } },
+          }),
+          streak > 0 ? el('span', { class: 'chip mini streak-chip' }, `🔥 ${streak} gün · ×${(streak >= 30 ? 2 : streak >= 14 ? 1.5 : streak >= 7 ? 1.25 : streak >= 3 ? 1.1 : 1)}`) : null,
+        ),
+        el('label', { class: 'field-label' }, 'Detay / not'),
+        noteInput,
+        el('div', { class: 'field-2col' },
+          el('div', {}, el('label', { class: 'field-label' }, 'Süre'), durInput),
+          el('div', { class: 'grow' }, el('label', { class: 'field-label' }, 'Ne zaman?'), timeInput),
+        ),
+        el('div', { class: 'quick-time-row' },
+          el('button', { class: 'chip mini', onclick: () => { timeInput.value = localDateTimeValue(); model.at = timeInput.value; } }, '🕐 Şimdi'),
+          el('button', { class: 'chip mini', onclick: () => { const d = new Date(); d.setHours(d.getHours() - 1); timeInput.value = localDateTimeValue(d); model.at = timeInput.value; } }, '1 saat önce'),
+          el('button', { class: 'chip mini', onclick: () => { const d = new Date(); d.setDate(d.getDate() - 1); timeInput.value = localDateTimeValue(d); model.at = timeInput.value; } }, 'Dün'),
+        ),
+        el('div', { class: 'row-actions', style: { marginTop: '18px' } },
           el('button', { class: 'btn ghost', onclick: close }, 'Vazgeç'),
-          el('button', { class: 'btn primary', onclick: async () => { await logNow(typeId, note); close(); } }, 'Kaydet'),
+          el('button', { class: 'btn primary', onclick: async () => {
+            let at = model.at ? new Date(model.at).getTime() : Date.now();
+            if (!at || isNaN(at)) at = Date.now();
+            if (at > Date.now()) at = Date.now();
+            const detail = model.duration ? { duration: Math.max(1, +model.duration) } : null;
+            await store.logAction(typeId, { note: model.note, at, detail });
+            haptic(15);
+            close();
+          } }, 'Kaydet ✓'),
         ),
       );
     },
