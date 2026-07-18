@@ -75,6 +75,18 @@ export const ACHIEVEMENTS = [
   { id: 'hafta_sonu', name: 'Hafta Sonu Savaşçısı', icon: '🏕️', category: 'ritim', desc: 'Hafta sonu bir eylem kaydet.',            check: (s) => s.weekendAction },
   { id: 'dolu_gun',   name: 'Dolu Dolu',      icon: '🌟', category: 'ritim',     desc: 'Bir günde 200+ XP kazan.',                    check: (s) => s.bestDayXp >= 200 },
   { id: 'efsane_gun', name: 'Efsane Gün',     icon: '💫', category: 'ritim',     desc: 'Bir günde 500+ XP kazan.',                    check: (s) => s.bestDayXp >= 500 },
+  { id: 'inanilmaz_gun', name: 'İnanılmaz Gün', icon: '☄️', category: 'ritim',   desc: 'Bir günde 1000+ XP kazan.',                   check: (s) => s.bestDayXp >= 1000 },
+
+  // --- Ek dolgu rozetler ---
+  { id: 'gorev_50',   name: 'Görev Ustası',   icon: '🎖️', category: 'emek',      desc: '50 görev tamamla.',                           check: (s) => s.questsCompleted >= 50 },
+  { id: 'notlu_100',  name: 'Kronikçi',       icon: '🖋️', category: 'emek',      desc: 'Nota sahip 100 eylem kaydet.',                check: (s) => s.actionsWithNotes >= 100 },
+  { id: 'cesitli_30', name: 'Sınır Tanımaz',  icon: '🌐', category: 'kesif',     desc: '30 farklı eylem türü dene.',                  check: (s) => s.distinctTypesUsed >= 30 },
+  { id: 'aktif_200',  name: 'İki Yüz Gün',    icon: '🗓️', category: 'seri',      desc: '200 gün üst üste aktif ol.',                  check: (s) => s.longestOverallStreak >= 200 },
+  { id: 'kod_100',    name: 'Yazılım Gurusu', icon: '🖥️', category: 'kesif',     desc: '100 yazılım eylemi kaydet.',                  check: (s) => (s.categoryCounts.kod || 0) >= 100 },
+  { id: 'dil_100',    name: 'Dil Bilgini',    icon: '📖', category: 'kesif',     desc: '100 dil eylemi kaydet.',                      check: (s) => (s.categoryCounts.dil || 0) >= 100 },
+  { id: 'hareket_100',name: 'Demir Beden',    icon: '🦿', category: 'kesif',     desc: '100 hareket eylemi kaydet.',                  check: (s) => (s.categoryCounts.hareket || 0) >= 100 },
+  { id: 'tam_denge',  name: 'Mutlak Denge',   icon: '🧿', category: 'stat',      desc: 'Tüm statları (ikincil dahil) 10. seviyeye getir.', check: (s) => s.minAllLevel >= 10 },
+  { id: 'seviye_40',  name: 'Efsanevi Yol',   icon: '🌠', category: 'ilerleme',  desc: 'Karakter seviyeni 40 yap.',                   check: (s) => s.characterLevel >= 40 },
 ];
 
 export const ACHIEVEMENT_CATEGORIES = [

@@ -63,8 +63,14 @@ export function renderCharacter() {
       if (v && permission() !== 'granted') await requestPermission();
       store.setSetting('reminders', v);
     }),
+    el('label', { class: 'toggle-row' },
+      el('span', {}, '⏰ Hatırlatma saati'),
+      el('input', { class: 'input time-input', type: 'time', value: s.reminderTime || '20:00',
+        onchange: (e) => store.setSetting('reminderTime', e.target.value) })),
     toggleRow('💾 Otomatik yerel yedek', s.autoBackup, (v) => store.setSetting('autoBackup', v)),
   );
+  settingsCard.appendChild(el('p', { class: 'muted small', style: { marginTop: '8px' } },
+    'Bildirimler cihaz izni gerektirir ve uygulama açıkken/açtığında en güvenilir çalışır.'));
   wrap.appendChild(settingsCard);
 
   // --- Yedekleme ---

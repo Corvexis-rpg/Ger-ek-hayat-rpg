@@ -14,13 +14,14 @@ import { renderOnboarding } from './ui/screens/onboarding.js';
 import { openQuickAdd } from './ui/actionForms.js';
 import { burst, sparkle } from './ui/components/confetti.js';
 import { showToast, showBanner } from './ui/components/toast.js';
+import { showLevelUp } from './ui/components/levelUpOverlay.js';
 import { accentById } from './config/rewards.js';
 import { statById } from './config/stats.js';
 import { titleForLevel } from './config/titles.js';
 import { ACHIEVEMENT_MAP } from './config/achievements.js';
 import { rewardById } from './config/rewards.js';
 import { autoLocalBackup } from './services/backup.js';
-import { maybeSendSystemReminder } from './services/reminders.js';
+import { scheduleDailyReminder } from './services/reminders.js';
 
 const app = document.getElementById('app');
 let fab, navOutlet, outlet, initialized = false;
@@ -82,6 +83,7 @@ function wireEvents() {
         break;
       case 'settings':
         applyTheme();
+        scheduleDailyReminder();
         break;
       case 'actionLogged': {
         showToast(`+${payload.totalXp} XP${payload.mult > 1 ? '  ×' + payload.mult + ' 🔥' : ''}`, 'success', 1600);
@@ -116,11 +118,15 @@ function wireEvents() {
 }
 
 function celebrateLevelUp(payload) {
-  burst({ count: 130, origin: { x: 0.5, y: 0.4 }, spread: 1.2 });
   if (payload.character) {
+    // karakter seviyesi → tam ekran kutlama
     const t = titleForLevel(payload.to);
-    showBanner({ icon: '🎉', title: `Seviye ${payload.to}!`, subtitle: `Unvan: ${t.name}`, tone: 'accent' });
+    showLevelUp({ level: payload.to, word: 'SEVİYE', title: 'Seviye Atladın!', subtitle: `Unvan: ${t.name}` });
+    setTimeout(() => burst({ count: 160, origin: { x: 0.5, y: 0.4 }, spread: 1.3 }), 150);
+    setTimeout(() => burst({ count: 80, origin: { x: 0.25, y: 0.5 }, spread: 1 }), 500);
+    setTimeout(() => burst({ count: 80, origin: { x: 0.75, y: 0.5 }, spread: 1 }), 700);
   } else {
+    burst({ count: 110, origin: { x: 0.5, y: 0.4 }, spread: 1.1 });
     const s = statById(payload.statId);
     if (s) showBanner({ icon: s.icon, title: `${s.name} Sv ${payload.to}!`, subtitle: 'Gelişmeye devam 💪', tone: 'accent' });
   }
@@ -129,8 +135,8 @@ function celebrateLevelUp(payload) {
 async function autoBackupAndRemind() {
   const s = store.settings();
   if (s.autoBackup) { autoLocalBackup(); }
-  // hatırlatmaları (izin varsa) nazikçe gönder
-  setTimeout(() => maybeSendSystemReminder(), 3000);
+  // hatırlatmayı belirlenen saate zamanla
+  scheduleDailyReminder();
 }
 
 // gün değişimi / geri dönüş: bakım tekrar çalışsın
@@ -142,7 +148,7 @@ async function checkDayRollover() {
   }
   lastMaintDay = today;
 }
-document.addEventListener('visibilitychange', () => { if (!document.hidden) checkDayRollover(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { checkDayRollover(); scheduleDailyReminder(); } });
 
 async function boot() {
   await store.load();

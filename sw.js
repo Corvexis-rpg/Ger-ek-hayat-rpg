@@ -1,5 +1,5 @@
 // Service worker — app shell önbelleği + çevrimdışı çalışma.
-const CACHE = 'ghrpg-v3';
+const CACHE = 'ghrpg-v4';
 
 const ASSETS = [
   './',
@@ -45,6 +45,7 @@ const ASSETS = [
   './src/ui/components/progressBar.js',
   './src/ui/components/virtualList.js',
   './src/ui/components/charts.js',
+  './src/ui/components/levelUpOverlay.js',
   './src/ui/screens/home.js',
   './src/ui/screens/actions.js',
   './src/ui/screens/quests.js',

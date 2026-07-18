@@ -67,6 +67,32 @@ export function lineChart(series, { color = 'var(--accent)', area = true, W = 34
   return s;
 }
 
+// Minik sparkline (etiketsiz/ızgarasız) — stat başına gösterim için.
+export function sparkline(series, { color = 'var(--accent)', W = 130, H = 40 } = {}) {
+  const s = svgRoot(W, H);
+  const pad = 3;
+  const iw = W - pad * 2, ih = H - pad * 2;
+  const n = series.length;
+  const max = Math.max(1, ...series.map((d) => d.value));
+  const x = (i) => pad + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
+  const y = (v) => pad + ih - (v / max) * ih;
+  if (n > 0) {
+    let line = '';
+    series.forEach((d, i) => { line += (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(d.value).toFixed(1) + ' '; });
+    const gid = nid();
+    const defs = svgEl('defs');
+    const grad = svgEl('linearGradient', { id: gid, x1: '0', y1: '0', x2: '0', y2: '1' });
+    const st1 = svgEl('stop', { offset: '0' }); st1.style.stopColor = color; st1.style.stopOpacity = '0.4';
+    const st2 = svgEl('stop', { offset: '1' }); st2.style.stopColor = color; st2.style.stopOpacity = '0';
+    grad.append(st1, st2); defs.appendChild(grad); s.appendChild(defs);
+    s.appendChild(svgEl('path', { d: line + `L${x(n - 1).toFixed(1)} ${pad + ih} L${x(0).toFixed(1)} ${pad + ih} Z`, fill: `url(#${gid})` }));
+    const p = svgEl('path', { d: line, fill: 'none', 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+    p.style.stroke = color;
+    s.appendChild(p);
+  }
+  return s;
+}
+
 // axes: [{label, color, value}] value 0..1
 export function radarChart(axes, { size = 240 } = {}) {
   const s = svgRoot(size, size);

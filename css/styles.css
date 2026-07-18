@@ -484,6 +484,34 @@ select.input option { color: var(--text); background: var(--surface); }
 .hm-legend { display: flex; align-items: center; gap: 4px; margin-top: 8px; justify-content: flex-end; }
 .hm-legend .hm-cell { width: 12px; height: 12px; }
 
+/* ---- Tam ekran seviye kutlaması ---- */
+.level-overlay { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--accent) 30%, rgba(6,4,20,0.86)), rgba(6,4,20,0.92));
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.3s; }
+.level-overlay.show { opacity: 1; }
+.level-pop { text-align: center; transform: scale(0.6); opacity: 0; transition: transform 0.45s cubic-bezier(0.18, 1.4, 0.4, 1), opacity 0.4s; }
+.level-overlay.show .level-pop { transform: scale(1); opacity: 1; }
+.level-ring { width: 190px; height: 190px; margin: 0 auto 20px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 26%, transparent), transparent 68%);
+  border: 3px solid var(--accent); box-shadow: 0 0 60px -6px var(--accent), inset 0 0 40px -12px var(--accent); animation: ringPulse 1.6s ease-in-out infinite; }
+@keyframes ringPulse { 0%,100% { box-shadow: 0 0 50px -8px var(--accent), inset 0 0 40px -14px var(--accent); } 50% { box-shadow: 0 0 80px -2px var(--accent), inset 0 0 50px -8px var(--accent); } }
+.level-word { font-size: 0.9rem; letter-spacing: 0.34em; color: var(--text-dim); font-weight: 700; padding-left: 0.34em; }
+.level-num { font-size: 5rem; font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.level-title { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.level-sub { font-size: 1rem; color: var(--text-dim); margin-top: 6px; }
+.level-hint { margin-top: 22px; font-size: 0.74rem; color: var(--text-faint); }
+
+/* ---- Stat başına sparkline ---- */
+.sparkgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.spark-item { background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 10px 4px; }
+.spark-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+.spark-name { font-size: 0.78rem; font-weight: 600; }
+.spark-lvl { font-size: 0.72rem; font-weight: 700; }
+
+/* ---- Sabit görev rozeti + zaman input ---- */
+.fixed-chip { background: color-mix(in srgb, var(--accent-2) 18%, transparent) !important; color: var(--accent-2) !important; border-color: color-mix(in srgb, var(--accent-2) 40%, transparent) !important; }
+.time-input { width: auto; padding: 8px 10px; }
+
 /* ---- Küçük ekran uyumu ---- */
 @media (max-width: 360px) {
   .action-grid, .qa-grid { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }

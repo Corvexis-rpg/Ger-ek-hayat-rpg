@@ -22,6 +22,8 @@ export function buildSummary(state) {
   let minMainLevel = Infinity;
   for (const s of MAIN_STATS) minMainLevel = Math.min(minMainLevel, statLevels[s.id] || 0);
   if (!isFinite(minMainLevel)) minMainLevel = 0;
+  const allLevels = Object.values(statLevels);
+  const minAllLevel = allLevels.length ? Math.min(...allLevels) : 0;
 
   const hasCustomType = (actionTypes || []).some((t) => t.isCustom);
   const leveledUpOnce = Object.values(statLevels).some((l) => l > 1) || characterLevel > 1;
@@ -67,6 +69,7 @@ export function buildSummary(state) {
     totalActions: (actions || []).length,
     statLevels,
     minMainLevel,
+    minAllLevel,
     characterLevel,
     longestStreakAny,
     longestOverallStreak,

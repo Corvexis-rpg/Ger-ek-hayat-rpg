@@ -1,6 +1,6 @@
 // İstatistikler: gelişim grafiği, radar dağılımı, haftalık özet, rekorlar, "geçmişte bugün".
 import { el } from '../components/dom.js';
-import { lineChart, radarChart, barChart, chartCard } from '../components/charts.js';
+import { lineChart, radarChart, barChart, sparkline, chartCard } from '../components/charts.js';
 import * as store from '../../store.js';
 import { STATS, STAT_MAP, MAIN_STATS, statById } from '../../config/stats.js';
 import { statLevelInfo } from '../../domain/xp.js';
@@ -61,6 +61,21 @@ export function renderStats() {
       el('span', { class: 'hm-cell hm-3' }), el('span', { class: 'hm-cell hm-4' }),
       el('span', { class: 'muted small' }, 'çok')),
   ));
+
+  // --- stat başına gelişim (sparkline) ---
+  const sparkCard = el('div', { class: 'card' },
+    el('div', { class: 'card-head' }, el('h3', {}, '📈 Stat Gelişimi'), el('span', { class: 'muted small' }, 'Son 30 gün')));
+  const sparkGrid = el('div', { class: 'sparkgrid' });
+  for (const s of STATS) {
+    const li = statLevelInfo(store.state.statProgress[s.id].xp);
+    sparkGrid.appendChild(el('div', { class: 'spark-item' },
+      el('div', { class: 'spark-head' },
+        el('span', { class: 'spark-name' }, `${s.icon} ${s.name}`),
+        el('span', { class: 'spark-lvl', style: { color: s.color } }, 'Sv ' + li.level)),
+      sparkline(dailySeries(actions, s.id, 30), { color: s.color })));
+  }
+  sparkCard.appendChild(sparkGrid);
+  wrap.appendChild(sparkCard);
 
   // --- haftalık özet ---
   const ws = weeklySummary(actions);

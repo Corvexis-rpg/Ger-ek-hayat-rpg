@@ -7,7 +7,7 @@ import { statLevelInfo } from '../../domain/xp.js';
 import { characterInfo, deriveClass } from '../../domain/character.js';
 import { effectiveStreak, effectiveMultiplier, OVERALL_KEY } from '../../domain/streaks.js';
 import { titleForLevel, nextTitle } from '../../config/titles.js';
-import { avatarById } from '../../config/rewards.js';
+import { avatarById, COSMETIC_TITLES } from '../../config/rewards.js';
 import { actionXp } from '../../domain/stats.js';
 import { todayKey } from '../../services/time.js';
 import { getReminders } from '../../services/reminders.js';
@@ -162,6 +162,6 @@ function activeStreaks() {
 }
 
 function cosmeticName(id) {
-  const map = { demir_irade: 'Demir İradeli', gece_kusu: 'Gece Kuşu', denge_ustasi: 'Denge Ustası' };
-  return map[id] || '';
+  const t = COSMETIC_TITLES.find((x) => x.id === id);
+  return t ? t.name : '';
 }

@@ -45,5 +45,14 @@ export const SIDE_POOL = [
   { id: 's_focus',     title: 'Bir odak seansı tamamla',       icon: '⏱️', criteria: { kind: 'action_count', match: { actionTypeId: 'pomodoro' }, target: 1 }, reward: { statId: 'duzen', xp: 20 } },
 ];
 
+// Sabit günlük görevler: her gün rastgele görevlere EK olarak gelir.
+// escalate varsa hedef her yeni günde artar; title içindeki {n} sayıyla değişir.
+export const FIXED_DAILY = [
+  { id: 'fx_pushup', title: '{n} şınav çek',        icon: '💪', escalate: { start: 5, step: 1 },  criteria: { kind: 'manual' }, reward: { statId: 'beden', xp: 20 } },
+  { id: 'fx_situp',  title: '{n} mekik çek',        icon: '🔥', escalate: { start: 10, step: 1 }, criteria: { kind: 'manual' }, reward: { statId: 'beden', xp: 20 } },
+  { id: 'fx_walk',   title: '1 saat yürüyüşe çık',  icon: '🚶', criteria: { kind: 'manual' },                                    reward: { statId: 'beden', xp: 25 } },
+  { id: 'fx_gym',    title: 'Spora git',            icon: '🏋️', criteria: { kind: 'action_count', match: { actionTypeId: 'spor' }, target: 1 }, reward: { statId: 'beden', xp: 25 } },
+];
+
 export const DAILY_COUNT = 5;
 export const WEEKLY_COUNT = 3;

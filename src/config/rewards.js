@@ -45,6 +45,14 @@ export const COSMETIC_TITLES = [
   { id: 'soz_ustasi',  name: 'Söz Ustası',     unlock: { type: 'achievement', id: 'dil_50' } },
   { id: 'maratoncu',   name: 'Maratoncu',      unlock: { type: 'achievement', id: 'seri_100' } },
   { id: 'kasif',       name: 'Yorulmaz Kâşif', unlock: { type: 'achievement', id: 'eylem_500' } },
+  { id: 'alevden',     name: 'Alev Ruhlu',     unlock: { type: 'achievement', id: 'seri_7' } },
+  { id: 'ritim_ust',   name: 'Ritim Ustası',   unlock: { type: 'achievement', id: 'aktif_30' } },
+  { id: 'cok_yonlu',   name: 'Çok Yönlü Usta', unlock: { type: 'achievement', id: 'cesitli_20' } },
+  { id: 'gunyildizi',  name: 'Günün Yıldızı',  unlock: { type: 'achievement', id: 'dolu_gun' } },
+  { id: 'gorev_krali', name: 'Görev Kralı',    unlock: { type: 'achievement', id: 'gorev_100' } },
+  { id: 'bilge_ruh',   name: 'Bilge Ruh',      unlock: { type: 'achievement', id: 'huzur_usta' } },
+  { id: 'sonsuz_merak',name: 'Sonsuz Meraklı', unlock: { type: 'achievement', id: 'merak_usta' } },
+  { id: 'kusursuz',    name: 'Kusursuz',       unlock: { type: 'achievement', id: 'hepsi_15' } },
 ];
 
 // Karakter kartı çerçeveleri (kozmetik). CSS'te .frame-<id> ile uygulanır.

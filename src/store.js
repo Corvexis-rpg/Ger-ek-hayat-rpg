@@ -11,6 +11,7 @@ import { rustAmount } from './domain/rust.js';
 import { characterInfo } from './domain/character.js';
 import { newlyUnlocked } from './domain/achievements.js';
 import { selectDaily, selectWeekly, selectSide, evaluate, filterPeriodActions } from './domain/quests.js';
+import { FIXED_DAILY } from './config/quests.js';
 import { todayKey, dayKey, weekKey, dateFromKey } from './services/time.js';
 
 function uid() {
@@ -51,7 +52,7 @@ function defaultMeta() {
     createdAt: Date.now(),
     lastActiveDay: null,
     onboarded: false,
-    settings: { theme: 'dark', accent: 'violet', reminders: true, autoBackup: true, lastBackup: null },
+    settings: { theme: 'dark', accent: 'violet', reminders: true, reminderTime: '20:00', autoBackup: true, lastBackup: null },
   };
 }
 
@@ -358,6 +359,27 @@ async function ensureDailyQuests(today) {
   const customDay = state.quests.filter((q) => q.kind === 'template' && q.period === 'day');
   for (const tpl of [...chosen, ...customDay]) {
     if (!hasInstance('daily', tpl.id, today)) await createInstance('daily', tpl, today);
+  }
+  // sabit günlük görevler (her gün, rastgelelere ek)
+  for (const tpl of FIXED_DAILY) {
+    if (hasInstance('daily', tpl.id, today)) continue;
+    let title = tpl.title;
+    if (tpl.escalate) {
+      if (!state.meta.settings.escalation) state.meta.settings.escalation = {};
+      const esc = state.meta.settings.escalation;
+      if (esc[tpl.id] == null) esc[tpl.id] = tpl.escalate.start;
+      const n = esc[tpl.id];
+      title = tpl.title.replace('{n}', n);
+      esc[tpl.id] = n + tpl.escalate.step; // sonraki gün için artır
+      await persistMeta();
+    }
+    const q = {
+      id: `inst:daily:${tpl.id}:${today}`, kind: 'instance', type: 'daily',
+      title, icon: tpl.icon, criteria: tpl.criteria, reward: tpl.reward,
+      periodKey: today, status: 'active', createdAt: Date.now(), sourceId: tpl.id, fixed: true,
+    };
+    state.quests.push(q);
+    await persistQuest(q);
   }
 }
 

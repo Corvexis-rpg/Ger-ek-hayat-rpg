@@ -61,7 +61,27 @@ export function maybeSendSystemReminder() {
   if (sent && sent.day === today) return;
 
   const reminders = getReminders();
-  if (!reminders.length) return;
-  const ok = notify('Gerçek Hayat RPG', reminders[0].message.replace(/^[^\s]+\s/, ''));
+  const msg = reminders.length
+    ? reminders[0].message.replace(/^[^\s]+\s/, '')
+    : 'Bugün küçük bir adım atmayı unutma — kahramanın seni bekliyor! ⚔️';
+  const ok = notify('Gerçek Hayat RPG', msg);
   if (ok) localStorage.setItem(SENT_KEY, JSON.stringify({ day: today }));
+}
+
+// Günlük hatırlatmayı belirlenen saate zamanla (uygulama açıkken çalışır).
+let _timer = null;
+export function scheduleDailyReminder() {
+  if (_timer) { clearTimeout(_timer); _timer = null; }
+  if (!settings().reminders) return;
+  const [h, m] = String(settings().reminderTime || '20:00').split(':').map(Number);
+  const now = new Date();
+  const target = new Date();
+  target.setHours(h || 20, m || 0, 0, 0);
+  if (target <= now) {
+    // saat geçmiş: bugün henüz gönderilmediyse hemen dene
+    maybeSendSystemReminder();
+    return;
+  }
+  const ms = Math.min(target - now, 2 ** 31 - 1);
+  _timer = setTimeout(() => { maybeSendSystemReminder(); }, ms);
 }

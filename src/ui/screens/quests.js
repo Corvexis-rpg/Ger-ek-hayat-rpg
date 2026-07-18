@@ -26,6 +26,7 @@ export function questRow(q, { deletable = false } = {}) {
       isManual && !done ? null : progressBar((q.target ? q.progress / q.target : 0), { gradient: true, height: 6 }),
       el('div', { class: 'quest-meta' },
         reward ? el('span', { class: 'chip mini', style: { color: reward.color } }, `${reward.icon} +${q.reward.xp} XP`) : null,
+        q.fixed ? el('span', { class: 'chip mini fixed-chip' }, '📌 sabit') : null,
       ),
     ),
     el('div', { class: 'quest-right' }, right,
