@@ -5,8 +5,8 @@ import * as store from '../../store.js';
 import { STATS, STAT_MAP, MAIN_STATS, statById } from '../../config/stats.js';
 import { statLevelInfo } from '../../domain/xp.js';
 import { OVERALL_KEY } from '../../domain/streaks.js';
-import { dailySeries, records, weeklySummary, onThisDay, xpByStat, weekdayName } from '../../domain/stats.js';
-import { formatDay, formatTime, relativeTime } from '../../services/time.js';
+import { dailySeries, records, weeklySummary, onThisDay, xpByStat, xpPerDay, weekdayName } from '../../domain/stats.js';
+import { formatDay, formatTime, relativeTime, todayKey, addDays, dateFromKey, monthShort } from '../../services/time.js';
 
 const ui = { range: 30, stat: null }; // stat: null=toplam
 
@@ -50,6 +50,17 @@ export function renderStats() {
   const maxLevel = Math.max(1, ...Object.values(levels));
   const axes = STATS.map((s) => ({ label: s.name.slice(0, 6), color: s.color, value: levels[s.id] / maxLevel }));
   wrap.appendChild(chartCard('🕸️ Stat Dağılımı', radarChart(axes, { size: 260 }), 'Seviyelere göre denge'));
+
+  // --- aktiflik takvimi (heatmap) ---
+  wrap.appendChild(el('div', { class: 'card' },
+    el('div', { class: 'card-head' }, el('h3', {}, '🔥 Aktiflik Takvimi'), el('span', { class: 'muted small' }, 'Son 13 hafta')),
+    activityHeatmap(actions),
+    el('div', { class: 'hm-legend' },
+      el('span', { class: 'muted small' }, 'az'),
+      el('span', { class: 'hm-cell hm-1' }), el('span', { class: 'hm-cell hm-2' }),
+      el('span', { class: 'hm-cell hm-3' }), el('span', { class: 'hm-cell hm-4' }),
+      el('span', { class: 'muted small' }, 'çok')),
+  ));
 
   // --- haftalık özet ---
   const ws = weeklySummary(actions);
@@ -100,6 +111,36 @@ export function renderStats() {
   }
 
   return wrap;
+}
+
+function hmBucket(xp) {
+  if (!xp) return 0;
+  if (xp <= 25) return 1;
+  if (xp <= 60) return 2;
+  if (xp <= 120) return 3;
+  return 4;
+}
+
+function activityHeatmap(actions) {
+  const map = xpPerDay(actions, null);
+  const today = todayKey();
+  let start = addDays(today, -(13 * 7 - 1));
+  const startDow = (dateFromKey(start).getDay() + 6) % 7; // Pazartesi=0
+  start = addDays(start, -startDow);
+  const days = [];
+  let d = start;
+  while (d <= today) { days.push(d); d = addDays(d, 1); }
+  while (days.length % 7 !== 0) days.push(null);
+  const cols = [];
+  for (let i = 0; i < days.length; i += 7) cols.push(days.slice(i, i + 7));
+
+  return el('div', { class: 'heatmap' },
+    ...cols.map((col) => el('div', { class: 'hm-col' },
+      ...col.map((day) => {
+        if (!day) return el('div', { class: 'hm-cell hm-empty' });
+        const xp = map.get(day) || 0;
+        return el('div', { class: 'hm-cell hm-' + hmBucket(xp), title: `${formatDay(day)}: ${xp} XP` });
+      }))));
 }
 
 function recordItem(icon, label, value) {

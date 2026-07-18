@@ -35,6 +35,46 @@ export const ACHIEVEMENTS = [
   { id: 'seviye_25',  name: 'Yükseliş',       icon: '🌟', category: 'ilerleme',  desc: 'Karakter seviyeni 25 yap.',                   check: (s) => s.characterLevel >= 25 },
   { id: 'seviye_50',  name: 'Zirve',          icon: '👑', category: 'ilerleme',  desc: 'Karakter seviyeni 50 yap.',                   check: (s) => s.characterLevel >= 50 },
   { id: 'gece_kusu',  name: 'Gece Nöbeti',    icon: '🌌', category: 'ozel',      desc: 'Gece yarısı ile sabah 4 arasında bir eylem kaydet.', check: (s) => s.nightAction },
+
+  // --- Emek (ek) ---
+  { id: 'eylem_10',   name: 'Isınıyor',       icon: '🌱', category: 'emek',      desc: '10 eylem kaydet.',                            check: (s) => s.totalActions >= 10 },
+  { id: 'eylem_25',   name: 'Alışkanlık',     icon: '🌿', category: 'emek',      desc: '25 eylem kaydet.',                            check: (s) => s.totalActions >= 25 },
+  { id: 'eylem_250',  name: 'Kararlı',        icon: '🔨', category: 'emek',      desc: '250 eylem kaydet.',                           check: (s) => s.totalActions >= 250 },
+  { id: 'eylem_750',  name: 'Durdurulamaz',   icon: '🚀', category: 'emek',      desc: '750 eylem kaydet.',                           check: (s) => s.totalActions >= 750 },
+  { id: 'eylem_2000', name: 'Yaşam Ustası',   icon: '🌌', category: 'emek',      desc: '2000 eylem kaydet.',                          check: (s) => s.totalActions >= 2000 },
+  { id: 'notlu_25',   name: 'Günlükçü',       icon: '📔', category: 'emek',      desc: 'Nota sahip 25 eylem kaydet.',                 check: (s) => s.actionsWithNotes >= 25 },
+  { id: 'gorev_25',   name: 'Görev Avcısı',   icon: '🎯', category: 'emek',      desc: '25 görev tamamla.',                           check: (s) => s.questsCompleted >= 25 },
+  { id: 'gorev_100',  name: 'Görev Efsanesi', icon: '🏹', category: 'emek',      desc: '100 görev tamamla.',                          check: (s) => s.questsCompleted >= 100 },
+
+  // --- Seri (ek) ---
+  { id: 'seri_3',     name: 'Kıvılcım',       icon: '✨', category: 'seri',      desc: 'Bir eylemde 3 günlük seri yakala.',           check: (s) => s.longestStreakAny >= 3 },
+  { id: 'seri_14',    name: 'İki Hafta',      icon: '🔥', category: 'seri',      desc: 'Bir eylemde 14 günlük seri yakala.',          check: (s) => s.longestStreakAny >= 14 },
+  { id: 'seri_50',    name: 'Yarım Yüz',      icon: '🌋', category: 'seri',      desc: 'Bir eylemde 50 günlük seri yakala.',          check: (s) => s.longestStreakAny >= 50 },
+  { id: 'seri_200',   name: 'Kutup Yıldızı',  icon: '⭐', category: 'seri',      desc: 'Bir eylemde 200 günlük seri yakala.',         check: (s) => s.longestStreakAny >= 200 },
+  { id: 'seri_365',   name: 'Bir Yıl!',       icon: '🎆', category: 'seri',      desc: 'Bir eylemde 365 günlük seri yakala.',         check: (s) => s.longestStreakAny >= 365 },
+  { id: 'aktif_14',   name: 'İki Hafta Ritim', icon: '📅', category: 'seri',     desc: '14 gün üst üste aktif ol.',                   check: (s) => s.longestOverallStreak >= 14 },
+  { id: 'aktif_100',  name: 'Yüz Gün Ritmi',  icon: '🌙', category: 'seri',      desc: '100 gün üst üste aktif ol.',                  check: (s) => s.longestOverallStreak >= 100 },
+
+  // --- Stat (ek) ---
+  { id: 'saglik_usta',name: 'Şifa Ustası',    icon: '❤️', category: 'stat',      desc: 'Sağlık statını 20. seviyeye getir.',          check: (s) => (s.statLevels.saglik || 0) >= 20 },
+  { id: 'duzen_usta', name: 'Baş Mimar',      icon: '🏛️', category: 'stat',      desc: 'Düzen statını 20. seviyeye getir.',           check: (s) => (s.statLevels.duzen || 0) >= 20 },
+  { id: 'sosyal_usta',name: 'Elçi',           icon: '🤝', category: 'stat',      desc: 'Sosyallik statını 15. seviyeye getir.',       check: (s) => (s.statLevels.sosyallik || 0) >= 15 },
+  { id: 'merak_usta', name: 'Kâşif Zihin',    icon: '🔭', category: 'stat',      desc: 'Merak statını 15. seviyeye getir.',           check: (s) => (s.statLevels.merak || 0) >= 15 },
+  { id: 'huzur_usta', name: 'Dingin Ruh',     icon: '🕊️', category: 'stat',      desc: 'Huzur statını 15. seviyeye getir.',           check: (s) => (s.statLevels.huzur || 0) >= 15 },
+  { id: 'hepsi_15',   name: 'Kusursuz Denge', icon: '💠', category: 'stat',      desc: 'Tüm ana statları 15. seviyeye getir.',        check: (s) => s.minMainLevel >= 15 },
+
+  // --- Keşif ---
+  { id: 'cesitli_10', name: 'Çok Yönlü',      icon: '🎭', category: 'kesif',     desc: '10 farklı eylem türü dene.',                  check: (s) => s.distinctTypesUsed >= 10 },
+  { id: 'cesitli_20', name: 'Rönesans İnsanı',icon: '🧭', category: 'kesif',     desc: '20 farklı eylem türü dene.',                  check: (s) => s.distinctTypesUsed >= 20 },
+  { id: 'dil_10',     name: 'Merhaba Dünya',  icon: '👋', category: 'kesif',     desc: '10 dil eylemi kaydet.',                       check: (s) => (s.categoryCounts.dil || 0) >= 10 },
+  { id: 'kod_10',     name: 'İlk Commit',     icon: '⌨️', category: 'kesif',     desc: '10 yazılım eylemi kaydet.',                   check: (s) => (s.categoryCounts.kod || 0) >= 10 },
+  { id: 'saglikci',   name: 'Sağlık Elçisi',  icon: '🥦', category: 'kesif',     desc: '30 beslenme eylemi kaydet.',                  check: (s) => (s.categoryCounts.beslenme || 0) >= 30 },
+
+  // --- Ritim ---
+  { id: 'ilk_isik',   name: 'İlk Işık',       icon: '🌄', category: 'ritim',     desc: 'Sabah 5-8 arası bir eylem kaydet.',           check: (s) => s.earlyAction },
+  { id: 'hafta_sonu', name: 'Hafta Sonu Savaşçısı', icon: '🏕️', category: 'ritim', desc: 'Hafta sonu bir eylem kaydet.',            check: (s) => s.weekendAction },
+  { id: 'dolu_gun',   name: 'Dolu Dolu',      icon: '🌟', category: 'ritim',     desc: 'Bir günde 200+ XP kazan.',                    check: (s) => s.bestDayXp >= 200 },
+  { id: 'efsane_gun', name: 'Efsane Gün',     icon: '💫', category: 'ritim',     desc: 'Bir günde 500+ XP kazan.',                    check: (s) => s.bestDayXp >= 500 },
 ];
 
 export const ACHIEVEMENT_CATEGORIES = [
@@ -42,6 +82,8 @@ export const ACHIEVEMENT_CATEGORIES = [
   { id: 'emek',      name: 'Emek' },
   { id: 'seri',      name: 'Seriler' },
   { id: 'stat',      name: 'Statlar' },
+  { id: 'kesif',     name: 'Keşif' },
+  { id: 'ritim',     name: 'Ritim' },
   { id: 'ilerleme',  name: 'İlerleme' },
   { id: 'ozel',      name: 'Özel' },
 ];

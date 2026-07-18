@@ -41,7 +41,29 @@ export function buildSummary(state) {
   }
   const routineCount = ((state.meta && state.meta.settings && state.meta.settings.routine) || []).length;
 
+  // gün bazlı en yüksek XP, notlu eylem, sabah/hafta sonu, çeşitlilik, tamamlanan görev
+  const perDay = {};
+  let bestDayXp = 0, actionsWithNotes = 0, earlyAction = false, weekendAction = false;
+  for (const a of actions || []) {
+    const xp = (a.statAwards || []).reduce((s, w) => s + w.xp, 0);
+    perDay[a.day] = (perDay[a.day] || 0) + xp;
+    if (perDay[a.day] > bestDayXp) bestDayXp = perDay[a.day];
+    if (a.note) actionsWithNotes++;
+    const h = hourOf(a.timestamp);
+    if (h >= 5 && h < 8) earlyAction = true;
+    const dow = new Date(a.timestamp).getDay();
+    if (dow === 0 || dow === 6) weekendAction = true;
+  }
+  const distinctTypesUsed = new Set((actions || []).map((a) => a.actionTypeId)).size;
+  const questsCompleted = (state.quests || []).filter((q) => q.status === 'completed').length;
+
   return {
+    bestDayXp,
+    actionsWithNotes,
+    earlyAction,
+    weekendAction,
+    distinctTypesUsed,
+    questsCompleted,
     totalActions: (actions || []).length,
     statLevels,
     minMainLevel,

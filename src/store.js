@@ -2,7 +2,7 @@
 import * as db from './db.js';
 import { STORES } from './db.js';
 import { STATS, MAIN_STATS } from './config/stats.js';
-import { DEFAULT_ACTION_TYPES } from './config/quickActions.js';
+import { DEFAULT_ACTION_TYPES, REMOVED_DEFAULT_IDS } from './config/quickActions.js';
 import { ALL_REWARDS } from './config/rewards.js';
 import { ACHIEVEMENT_MAP } from './config/achievements.js';
 import { statLevelInfo } from './domain/xp.js';
@@ -82,17 +82,30 @@ export async function load() {
     }));
     await db.putMany(STORES.actionTypes, state.actionTypes);
   } else {
-    // Yeni sürümlerde eklenen hazır eylemleri mevcut kullanıcılara da ekle
+    // Mevcut kullanıcıları güncelle: kaldırılanları sil, hazır eylemleri tazele, eksikleri ekle
+    const cfgMap = Object.fromEntries(DEFAULT_ACTION_TYPES.map((t) => [t.id, t]));
+    const removed = new Set(REMOVED_DEFAULT_IDS);
+    const changed = [];
+    const toDelete = [];
+    state.actionTypes = state.actionTypes.filter((t) => {
+      if (!t.isCustom && removed.has(t.id)) { toDelete.push(t.id); return false; }
+      if (!t.isCustom && cfgMap[t.id]) {
+        const c = cfgMap[t.id];
+        t.name = c.name; t.icon = c.icon; t.category = c.category;
+        t.awards = c.awards; t.dailyLimit = c.dailyLimit || null;
+        changed.push(t);
+      }
+      return true;
+    });
+    for (const id of toDelete) await db.del(STORES.actionTypes, id);
     const have = new Set(state.actionTypes.map((t) => t.id));
     const missing = DEFAULT_ACTION_TYPES.filter((t) => !have.has(t.id));
-    if (missing.length) {
-      const base = state.actionTypes.length;
-      const added = missing.map((t, i) => ({
-        ...t, uses: 0, sortOrder: base + i, isCustom: false, isFavorite: !!t.isFavorite,
-      }));
-      state.actionTypes.push(...added);
-      await db.putMany(STORES.actionTypes, added);
-    }
+    const base = state.actionTypes.length;
+    const added = missing.map((t, i) => ({
+      ...t, uses: 0, sortOrder: base + i, isCustom: false, isFavorite: !!t.isFavorite,
+    }));
+    if (added.length) state.actionTypes.push(...added);
+    if (changed.length || added.length) await db.putMany(STORES.actionTypes, [...changed, ...added]);
   }
 
   state.actions = (await db.getAll(STORES.actions)).sort((a, b) => b.timestamp - a.timestamp);

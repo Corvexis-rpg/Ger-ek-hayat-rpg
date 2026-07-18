@@ -1,6 +1,7 @@
 // Başarımlar: rozet galerisi (kilitli=siluet) + Envanter (kozmetik ödüller).
 import { el } from '../components/dom.js';
 import { showToast } from '../components/toast.js';
+import { confirmDialog } from '../components/sheet.js';
 import * as store from '../../store.js';
 import { ACHIEVEMENTS, ACHIEVEMENT_CATEGORIES } from '../../config/achievements.js';
 import { AVATARS, ACCENTS, COSMETIC_TITLES, FRAMES } from '../../config/rewards.js';
@@ -64,6 +65,24 @@ function renderInventory() {
     () => store.state.character.frameId || 'none', charLevel));
   frag.appendChild(rewardSection('🏷️ Unvanlar', COSMETIC_TITLES, 'title',
     (r) => '🏷️', () => store.state.character.cosmeticTitleId, charLevel));
+
+  // --- Karakter & Veri (sıfırlama/silme buradan da erişilir) ---
+  frag.appendChild(el('div', { class: 'card' },
+    el('div', { class: 'card-head' }, el('h3', {}, '⚙️ Karakter & Veri')),
+    el('button', { class: 'btn ghost full', style: { marginBottom: '10px' }, onclick: () => { location.hash = '#/character'; } }, '👤 Karakter, tema ve yedekleme →'),
+    el('p', { class: 'muted small' }, 'İlerlemeyi sıfırla: XP, seri, geçmiş, başarım ve ödüller silinir; karakterin ve özel eylemlerin kalır.'),
+    el('button', { class: 'btn full', style: { marginBottom: '12px' }, onclick: async () => {
+      if (await confirmDialog({ title: 'İlerlemeyi sıfırla', message: 'Tüm XP, seri, eylem geçmişi, başarım ve ödüller sıfırlanacak. Karakterin ve özel eylemlerin kalır. Devam edilsin mi?', confirmText: 'İlerlemeyi sıfırla', danger: true })) {
+        await store.resetProgress(); showToast('İlerleme sıfırlandı', 'info'); location.hash = '#/home';
+      }
+    } }, '♻️ Sadece ilerlemeyi sıfırla'),
+    el('p', { class: 'muted small' }, 'Hesabı sil: karakter dahil HER ŞEY silinir, uygulama sıfırdan başlar. Geri alınamaz.'),
+    el('button', { class: 'btn danger full', onclick: async () => {
+      if (await confirmDialog({ title: 'Hesabı ve her şeyi sil', message: 'Karakter, eylemler, özel eylemler, plan — tüm veri kalıcı olarak silinecek ve uygulama en baştan başlayacak. Emin misin?', confirmText: 'Her şeyi sil', danger: true })) {
+        await store.resetAll(); location.hash = '#/home'; location.reload();
+      }
+    } }, '🗑️ Hesabı sil (her şeyi sıfırla)'),
+  ));
 
   return frag;
 }

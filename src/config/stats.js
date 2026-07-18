@@ -9,6 +9,8 @@ export const STATS = [
   { id: 'disiplin',   name: 'Disiplin',   type: 'secondary', icon: '🛡️', color: '#a78bfa', desc: 'Serileri koruma davranışından beslenir' },
   { id: 'sosyallik',  name: 'Sosyallik',  type: 'secondary', icon: '🤝', color: '#22d3ee', desc: 'Sosyal etkileşim eylemlerinden' },
   { id: 'yaraticilik',name: 'Yaratıcılık',type: 'secondary', icon: '🎨', color: '#f472b6', desc: 'Hobi, sanat ve yazma eylemlerinden' },
+  { id: 'merak',      name: 'Merak',      type: 'secondary', icon: '🔭', color: '#38bdf8', desc: 'Öğrenme, dil ve keşiften beslenir' },
+  { id: 'huzur',      name: 'Huzur',      type: 'secondary', icon: '🕊️', color: '#5eead4', desc: 'Meditasyon, doğa ve dinginlikten beslenir' },
 ];
 
 export const STAT_MAP = Object.fromEntries(STATS.map((s) => [s.id, s]));

@@ -462,6 +462,28 @@ select.input { appearance: none; }
 select.input optgroup { color: var(--text); background: var(--surface); }
 select.input option { color: var(--text); background: var(--surface); }
 
+/* ---- Hero tıklama + günün sözü ---- */
+.hero-card.clickable { cursor: pointer; }
+.hero-card.clickable:active { transform: scale(0.995); }
+.hero-tap-hint { margin-top: 10px; text-align: right; font-size: 0.72rem; color: var(--text-faint); font-weight: 600; }
+.quote-card { display: flex; align-items: flex-start; gap: 8px; background: color-mix(in srgb, var(--accent) 8%, var(--surface)); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 12px; padding: 12px 14px; }
+.quote-mark { font-size: 1.6rem; line-height: 1; color: var(--accent); font-weight: 800; }
+.quote-text { font-size: 0.9rem; font-style: italic; color: var(--text); }
+
+/* ---- Aktiflik takvimi (heatmap) ---- */
+.heatmap { display: flex; gap: 3px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
+.heatmap::-webkit-scrollbar { display: none; }
+.hm-col { display: flex; flex-direction: column; gap: 3px; }
+.hm-cell { width: 13px; height: 13px; border-radius: 3px; background: var(--surface-3); flex-shrink: 0; }
+.hm-empty { background: transparent; }
+.hm-0 { background: var(--surface-3); }
+.hm-1 { background: color-mix(in srgb, var(--accent) 30%, var(--surface-3)); }
+.hm-2 { background: color-mix(in srgb, var(--accent) 55%, var(--surface-3)); }
+.hm-3 { background: color-mix(in srgb, var(--accent) 80%, transparent); }
+.hm-4 { background: var(--accent); }
+.hm-legend { display: flex; align-items: center; gap: 4px; margin-top: 8px; justify-content: flex-end; }
+.hm-legend .hm-cell { width: 12px; height: 12px; }
+
 /* ---- Küçük ekran uyumu ---- */
 @media (max-width: 360px) {
   .action-grid, .qa-grid { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); }

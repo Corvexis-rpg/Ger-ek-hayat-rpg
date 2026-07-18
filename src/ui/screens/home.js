@@ -13,6 +13,7 @@ import { todayKey } from '../../services/time.js';
 import { getReminders } from '../../services/reminders.js';
 import { openQuickAdd } from '../actionForms.js';
 import { planCard } from '../routine.js';
+import { quoteOfDay } from '../../config/quotes.js';
 import { questRow } from './quests.js';
 
 export function renderHome() {
@@ -26,8 +27,9 @@ export function renderHome() {
   const todaysActions = store.state.actions.filter((a) => a.day === today);
   const todayXp = todaysActions.reduce((s, a) => s + actionXp(a), 0);
 
-  // --- karakter kartı ---
-  wrap.appendChild(el('div', { class: 'card hero-card frame-' + (ch.frameId || 'none') },
+  // --- karakter kartı (dokununca Karakter & Ayarlar ekranı) ---
+  wrap.appendChild(el('div', { class: 'card hero-card clickable frame-' + (ch.frameId || 'none'),
+    onclick: () => { location.hash = '#/character'; } },
     el('div', { class: 'hero-top' },
       el('div', { class: 'avatar-badge' }, avatar.emoji),
       el('div', { class: 'hero-id' },
@@ -46,7 +48,13 @@ export function renderHome() {
       progressBar(info.progress, { gradient: true, height: 12 }),
       el('div', { class: 'xp-caption' }, `${info.intoLevel} / ${info.needed} XP`),
     ),
+    el('div', { class: 'hero-tap-hint' }, '👤 Karakter & Ayarlar ›'),
   ));
+
+  // --- günün sözü ---
+  wrap.appendChild(el('div', { class: 'quote-card' },
+    el('span', { class: 'quote-mark' }, '“'),
+    el('span', { class: 'quote-text' }, quoteOfDay())));
 
   // --- nazik hatırlatmalar ---
   const reminders = getReminders();
