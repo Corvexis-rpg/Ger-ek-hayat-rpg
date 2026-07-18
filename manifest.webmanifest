@@ -1,0 +1,20 @@
+{
+  "name": "Gerçek Hayat RPG",
+  "short_name": "Hayat RPG",
+  "description": "Gerçek hayatını RPG'leştiren, çevrimdışı çalışan alışkanlık takip uygulaması.",
+  "lang": "tr",
+  "dir": "ltr",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0b24",
+  "theme_color": "#0f0b24",
+  "categories": ["lifestyle", "productivity", "health"],
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "./icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
